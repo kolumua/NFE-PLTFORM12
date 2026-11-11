@@ -4,19 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0f172a">
-<title>NFE Platform — Autonomous Freight & Ecosystem Spine</title>
+<title>NFE Platform — Enterprise Gateway & Operational Spine</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 :root{--ink:#0f172a;--muted:#64748b;--line:#cbd5e1;--bg:#f8fafc;--blue:#2563eb;--blue-soft:#eff6ff;--green:#15803d;--green-soft:#dcfce7;--amber:#b45309;--amber-soft:#fef3c7;--red:#b91c1c;--red-soft:#fef2f2;--tally:#ea580c;--tally-soft:#fff7ed;--wa:#16a34a;--wa-soft:#dcfce7;--white:#fff}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:13px/1.4 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}button,input,select,textarea{font:inherit}button{cursor:pointer}
 
-/* LANDING GATEWAY STYLES */
+/* LANDING & GATEWAY STYLES */
 #landingView{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;min-height:100vh}
 .brand-header{text-align:center;margin-bottom:36px}
 .brand-badge{display:inline-block;background:#eff6ff;border:1px solid #bfdbfe;color:#2563eb;font-size:11px;font-weight:800;padding:4px 14px;border-radius:20px;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
 .brand-title{font-size:34px;font-weight:900;letter-spacing:2px;color:#0f172a}
 .brand-title span{color:#2563eb}
+.brand-sub{font-size:14px;color:#64748b;margin-top:6px;font-weight:600}
 .cards-container{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1080px;width:100%}
 @media(max-width:860px){.cards-container{grid-template-columns:1fr}}
 .role-card{background:#ffffff;border:2px solid #e2e8f0;border-radius:16px;padding:32px 24px;text-align:center;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;transition:all 0.2s ease;box-shadow:0 4px 6px -1px rgba(0,0,0,0.04);position:relative}
@@ -28,9 +29,10 @@
 .role-title{font-size:20px;font-weight:900;color:#0f172a;margin-bottom:6px}
 .role-target{font-size:11px;font-weight:800;color:#2563eb;text-transform:uppercase;margin-bottom:10px}
 .role-desc{font-size:13px;color:#64748b;line-height:1.5;font-weight:500;min-height:58px}
-.btn-enter{margin-top:22px;width:100%;padding:13px;background:#0f172a;color:#ffffff;border:none;border-radius:8px;font-size:14px;font-weight:800;cursor:pointer}
+.btn-enter{margin-top:22px;width:100%;padding:13px;background:#0f172a;color:#ffffff;border:none;border-radius:8px;font-size:14px;font-weight:800;cursor:pointer;transition:background 0.2s}
+.role-card:hover .btn-enter{background:#2563eb}
 
-/* MODALS */
+/* MODAL STYLES */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,0.7);backdrop-filter:blur(4px);justify-content:center;align-items:center;z-index:999;padding:16px}
 .modal-box{background:#ffffff;border-radius:16px;padding:32px 28px;max-width:440px;width:100%;box-shadow:0 20px 25px -5px rgba(0,0,0,0.15);text-align:left;position:relative;max-height:90vh;overflow-y:auto}
 .btn-option{padding:16px;border:2px solid #e2e8f0;border-radius:10px;background:#fff;font-weight:700;font-size:14px;color:#0f172a;cursor:pointer;display:flex;align-items:center;justify-content:space-between;width:100%;margin-top:10px}
@@ -38,10 +40,14 @@
 .form-group{margin-bottom:16px}
 .form-group label{display:block;font-size:11px;color:#64748b;text-transform:uppercase;font-weight:700;margin-bottom:6px}
 .form-control{width:100%;padding:12px 14px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:8px;font-size:14px;color:#0f172a}
+.form-control:focus{outline:none;border-color:#2563eb;background:#fff}
 .btn-submit{width:100%;padding:14px;background:#0f172a;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:800;cursor:pointer;margin-top:10px}
+.btn-submit:hover{background:#2563eb}
 .close-btn{position:absolute;top:16px;right:18px;background:none;border:none;font-size:18px;color:#64748b;cursor:pointer;font-weight:800}
+.auth-switch{margin-top:16px;text-align:center;font-size:13px;color:#64748b}
+.auth-switch a{color:#2563eb;font-weight:700;cursor:pointer;text-decoration:none}
 
-/* MAIN DASHBOARD STYLES */
+/* MAIN OPERATIONAL DASHBOARD STYLES */
 #mainAppContainer{display:none;width:100%;background:#f1f5f9;min-height:100vh}
 .top{background:#fff;border-bottom:2px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
 .brand{font-weight:900;font-size:20px;letter-spacing:1px}.brand span{color:var(--blue)}
@@ -52,13 +58,18 @@
 .shell{max-width:1420px;margin:auto;padding:16px}
 .hero{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;background:#fff;padding:12px 18px;border:2px solid var(--line);border-radius:10px}
 .hero h1{font-size:18px;margin:0;font-weight:900}
+.rolebar{display:flex;gap:4px;background:#e2e8f0;padding:3px;border-radius:8px}
+.rolebar button{border:0;border-radius:6px;padding:7px 12px;background:transparent;font-weight:800;font-size:12px;color:#475569}
+.rolebar button.active{background:#fff;color:var(--blue);box-shadow:0 1px 3px #0002}
 .layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:16px}
 .side,.panel,.stat{background:#fff;border:2px solid var(--line);border-radius:10px}
 .side{padding:14px;height:max-content;position:sticky;top:68px}
 .side h3{font-size:14px;margin:0 0 2px;font-weight:900}
+.side small{font-family:ui-monospace,monospace;color:var(--blue);font-weight:800}
 .nav{display:grid;gap:4px;margin-top:12px}
 .nav button{border:0;background:transparent;text-align:left;padding:9px 10px;border-radius:6px;color:#475569;font-weight:750;font-size:12px;cursor:pointer}
 .nav button.active{background:var(--blue-soft);color:var(--blue)}
+.receiver-mode .nav button.active{background:var(--green-soft);color:var(--green)}
 .main{min-width:0}.page{display:none}.page.active{display:block}
 .pagehead{display:flex;justify-content:space-between;align-items:center;margin:0 0 12px}
 .pagehead h2{font-size:17px;margin:0;font-weight:900}
@@ -66,6 +77,10 @@
 .stat{padding:12px}.stat label{display:block;text-transform:uppercase;color:var(--muted);font-size:10px;font-weight:800}
 .stat strong{font-size:22px;display:block;margin-top:2px;font-weight:900}
 .panel{padding:16px;margin-bottom:14px}
+.panelhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+.panel h3{font-size:13px;text-transform:uppercase;margin:0;font-weight:900}
+.chip-row{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:10px}
+.chip{background:#f8fafc;border:1.5px solid var(--line);padding:5px 9px;border-radius:6px;font-size:11px;font-weight:700;white-space:nowrap;cursor:pointer}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .field label{display:block;font-size:10px;text-transform:uppercase;font-weight:850;color:#475569;margin-bottom:4px}
 .field input,.field select,.field textarea{width:100%;border:1.5px solid var(--line);border-radius:6px;padding:8px 10px;background:#fff;color:var(--ink);font-size:12px;font-weight:600}
@@ -73,7 +88,6 @@
 .btn{border:1.5px solid var(--line);border-radius:6px;padding:8px 12px;background:#fff;color:var(--ink);font-weight:800;font-size:11px;cursor:pointer}
 .btn.blue{background:var(--blue);border-color:var(--blue);color:#fff}
 .btn.green{background:var(--green);border-color:var(--green);color:#fff}
-.btn.amber{background:var(--amber);border-color:var(--amber);color:#fff}
 .btn.tally{background:var(--tally);border-color:var(--tally);color:#fff}
 .btnrow{display:flex;gap:6px;flex-wrap:wrap}
 .notice{border:1.5px dashed var(--line);background:#f8fafc;border-radius:8px;padding:10px;color:#475569;font-size:11px;margin:10px 0;line-height:1.4}
@@ -89,20 +103,27 @@ th{font-size:10px;text-transform:uppercase;color:var(--muted);background:#f8fafc
 #liveMap{width:100%;height:350px;border-radius:8px;border:1.5px solid var(--line);z-index:1}
 .telemetry-card{background:#f8fafc;border:1.5px solid var(--line);border-radius:8px;padding:12px}
 .tele-row{display:flex;justify-content:space-between;padding:6px 0;font-size:12px;border-bottom:1px dashed #cbd5e1}
+.event{display:grid;grid-template-columns:12px 1fr;gap:8px;padding-bottom:10px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--blue);margin-top:4px}
+.modalback{position:fixed;inset:0;background:#0f172a88;display:none;align-items:center;justify-content:center;padding:14px;z-index:200}
+.modalback.show{display:flex}
+.modal{background:#fff;border-radius:10px;padding:20px;max-width:540px;width:100%;max-height:90vh;overflow:auto}
+.slip-row{display:flex;justify-content:space-between;padding:5px 0;font-size:12px;font-weight:600}
 .toast{position:fixed;right:16px;bottom:16px;background:#0f172a;color:#fff;padding:10px 14px;border-radius:8px;z-index:300;font-size:12px;font-weight:700}
 .wa-simulation-box{background:var(--wa-soft);border:1.5px solid #bbf7d0;border-radius:8px;padding:10px;margin-bottom:10px;font-size:11px;color:#14532d}
-.driver-card{background:#1e293b;color:#fff;border-radius:12px;padding:16px;margin:10px 0;}
+.assignment-card{border:1.5px solid var(--line);border-radius:8px;padding:12px;margin:10px 0;background:#fbfdff}
+.assignment-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
 .hidden{display:none!important}
 </style>
 </head>
 <body>
 
-  <!-- ================= LANDING GATEWAY ================= -->
+  <!-- ================= PHASE 1: ENTERPRISE GATEWAY LANDING ================= -->
   <div id="landingView">
     <div class="brand-header">
-      <div class="brand-badge">NFE Ecosystem Spine (Production Ready)</div>
+      <div class="brand-badge">Autonomous Freight Spine</div>
       <div class="brand-title">NFE <span>PLATFORM</span></div>
-      <div class="brand-sub">Autonomous Freight, Transporter Fleet & CFO Tally Audit</div>
+      <div class="brand-sub">Enterprise Road Freight & Industrial Movement Protocol</div>
     </div>
 
     <div class="cards-container">
@@ -115,38 +136,42 @@ th{font-size:10px;text-transform:uppercase;color:var(--muted);background:#f8fafc
           </div>
           <div class="role-title">MANAGER</div>
           <div class="role-target">Factory & Hub Desk</div>
-          <div class="role-desc">1-Click load dispatch broadcast and inward dock receiving.</div>
+          <div class="role-desc">Instant load dispatch declaration, E-Way Bill auto-read, and dock inward gate verification.</div>
         </div>
         <button class="btn-enter">ACCESS DESK ➔</button>
       </div>
 
       <!-- PILLAR 02: TRANSPORTER -->
-      <div class="role-card" onclick="openAuthModal('transporter')">
+      <div class="role-card" onclick="openAuthModal('transporter', 'login')">
         <span class="card-seq">PILLAR 02</span>
         <div>
           <div class="icon-wrapper">
             <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
           </div>
           <div class="role-title">TRANSPORTER</div>
-          <div class="role-target">Fleet & Driver Pool</div>
-          <div class="role-desc">Register trucks & drivers, claim broadcasted loads, and check payout ledger.</div>
+          <div class="role-target">Fleet & Route Control</div>
+          <div class="role-desc">Load broadcasts matching, vehicle allocation, driver dispatch links, and freight margins.</div>
         </div>
         <button class="btn-enter">FLEET COCKPIT ➔</button>
       </div>
 
       <!-- PILLAR 03: EXECUTIVE / CFO -->
-      <div class="role-card" onclick="openAuthModal('cfo')">
+      <div class="role-card" onclick="openAuthModal('cfo', 'login')">
         <span class="card-seq">PILLAR 03</span>
         <div>
           <div class="icon-wrapper">
             <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
           </div>
-          <div class="role-title">EXECUTIVE / CFO</div>
-          <div class="role-target">Tally & Plant Audit</div>
-          <div class="role-desc">Kat-pit debit note reconciliations and Tally Prime batch XML export.</div>
+          <div class="role-title">EXECUTIVE</div>
+          <div class="role-target">CFO & Plant Audit</div>
+          <div class="role-desc">Multi-plant freight billing audits, Tally/ERP ledger sync, transporter ratings, and zero-leakage control.</div>
         </div>
-        <button class="btn-enter">TALLY AUDIT DESK ➔</button>
+        <button class="btn-enter">ENTERPRISE AUDIT ➔</button>
       </div>
+    </div>
+
+    <div style="margin-top:36px;font-size:12px;color:#94a3b8;font-weight:600;">
+      🔒 Powered by NFE Protocol • Industrial Grade • Instant E-Way & Tally XML Auto Sync
     </div>
   </div>
 
@@ -155,12 +180,13 @@ th{font-size:10px;text-transform:uppercase;color:var(--muted);background:#f8fafc
     <div class="modal-box" style="text-align: center;">
       <button class="close-btn" onclick="closeModal('managerModal')">✕</button>
       <h3 style="font-size: 19px; font-weight: 800; color: #0f172a;">Select Operational Floor</h3>
+      <p style="font-size: 12px; color: #64748b; margin-top: 4px;">Choose direct bay deck to initialize session</p>
       <div style="display:flex;flex-direction:column;gap:10px;margin-top:16px;">
-        <button class="btn-option" onclick="openAuthModal('manager', 'Sender')">
-          <div style="text-align: left;"><div style="font-weight: 800;">📦 Sender (Outward Dispatch Desk)</div><div style="font-size: 11px; color: #64748b;">1-Click load broadcast</div></div>➔
+        <button class="btn-option" onclick="openAuthModal('manager', 'login', 'Sender')">
+          <div style="text-align: left;"><div style="font-weight: 800;">📦 Sender (Outward Dispatch)</div><div style="font-size: 11px; color: #64748b;">Factory gate & load dispatch</div></div>➔
         </button>
-        <button class="btn-option" onclick="openAuthModal('manager', 'Receiver')">
-          <div style="text-align: left;"><div style="font-weight: 800;">📥 Receiver (Inward Dock)</div><div style="font-size: 11px; color: #64748b;">Dock count & Kat-pit verification</div></div>➔
+        <button class="btn-option" onclick="openAuthModal('manager', 'login', 'Receiver')">
+          <div style="text-align: left;"><div style="font-weight: 800;">📥 Receiver (Inward Receiving)</div><div style="font-size: 11px; color: #64748b;">Warehouse dock & POD verification</div></div>➔
         </button>
       </div>
     </div>
@@ -172,137 +198,206 @@ th{font-size:10px;text-transform:uppercase;color:var(--muted);background:#f8fafc
       <h3 id="authTitle" style="font-size: 18px; font-weight: 800; margin-bottom: 4px;">Portal Access</h3>
       <p id="authSubtitle" style="font-size: 12px; color: #64748b; margin-bottom: 16px;">Enter your credentials</p>
       <form id="authForm" onsubmit="handleFormSubmit(event)"></form>
+      <div class="auth-switch" id="authSwitchContainer"></div>
     </div>
   </div>
 
-  <!-- ================= MAIN DASHBOARD ================= -->
+  <!-- ================= PHASE 2: MAIN OPERATIONAL DASHBOARD ================= -->
   <div id="mainAppContainer">
     <header class="top">
       <div class="brand">NFE <span>PLATFORM</span></div>
       <div style="display:flex;gap:10px;align-items:center;">
-        <span class="pill wa">🟢 WhatsApp Broadcast Active</span>
-        <span class="pill tally">Tally Sync Ready</span>
+        <span class="pill wa">🟢 WhatsApp Gateway Live</span>
+        <span class="pill tally">Tally Prime XML Export</span>
         <span class="pill good" id="activeOperatorBadge">Operator: Ramesh Agarwal</span>
-        <button class="btn" style="padding:4px 8px;font-size:10px;" onclick="location.reload()">Logout</button>
+        <span class="pill" id="identityPill">Apex Agro Foods (NFE-HUB-1024)</span>
       </div>
     </header>
 
     <div class="shell">
       <div class="hero">
-        <div><h1 id="heroTitle">Autonomous Road Freight & Operations</h1><div style="font-size:12px;color:var(--muted)">Integrated Ecosystem Spine</div></div>
+        <div><h1>Autonomous Road Freight & Manager ERP Engine</h1><div style="font-size:12px;color:var(--muted)">Live Highway Radar & Enterprise Tally Reconciliation</div></div>
+        <div class="rolebar">
+          <button id="btnRoleSender" class="active" onclick="setRole('sender')">👑 Manager (Sender Desk)</button>
+          <button id="btnRoleReceiver" onclick="setRole('receiver')">📥 Manager (Receiver Dock)</button>
+        </div>
       </div>
 
       <div class="layout" id="layoutRoot">
         <aside class="side" id="sidebar">
-          <h3 id="sideTitle">Navigation</h3>
+          <h3 id="sideTitle">Manager Desk</h3>
           <small id="sideNfeId">NFE-HUB-1024</small>
           <nav class="nav" id="navContainer"></nav>
+          <div class="notice" style="margin-top:14px;font-size:10px;">
+            🧾 <b>Tally Export:</b> Settled records with auto-calculated shortage/debit notes can be exported as XML.
+          </div>
         </aside>
 
         <main class="main">
-          <!-- PAGE: SENDER PIPELINE -->
+          <!-- PAGE 1: OVERVIEW PIPELINE -->
           <section class="page active" id="pg-overview">
             <div class="pagehead">
-              <h2>Sender Live Dispatch Pipeline</h2>
-              <button class="btn blue" onclick="goPage('pg-create')">+ Broadcast New Load</button>
+              <div><h2 id="viewHeading">Sender Live Pipeline</h2></div>
+              <div class="btnrow">
+                <button class="btn tally" onclick="exportFullTallyXML()">📥 Export Tally Prime XML</button>
+                <button class="btn blue" onclick="goPage('pg-create')">+ New Shipment Declaration</button>
+              </div>
             </div>
+            <div class="stats" id="statsRow"></div>
             <div id="whatsappLogBanner"></div>
+            
+            <div class="panel" id="controlTowerPanel">
+              <div class="panelhead"><h3>Operational Control Tower</h3><span class="pill">Action queue</span></div>
+              <div id="controlTowerFeed" class="grid2"></div>
+            </div>
+            
+            <div class="panel" id="assignmentPanel">
+              <div class="panelhead"><h3>Transporter & Driver Assignment</h3><span class="pill">Manager action</span></div>
+              <div class="notice">Assign a transporter, driver and vehicle to an accepted shipment before dispatch.</div>
+              <div id="assignmentFeed"></div>
+            </div>
+
             <div class="panel">
+              <div class="panelhead">
+                <h3>Active Pipeline Corridor</h3>
+                <input id="searchBox" placeholder="Filter shipment ID / party" oninput="renderTable()" style="max-width:220px;border:1px solid var(--line);padding:6px 8px;border-radius:6px;font-size:11px">
+              </div>
               <table>
                 <thead>
-                  <tr><th>ID</th><th>Receiver</th><th>Goods</th><th>Qty</th><th>Freight</th><th>State</th><th>Status</th></tr>
+                  <tr>
+                    <th>ID</th>
+                    <th>Counter-Party</th>
+                    <th>Cargo / Spec</th>
+                    <th>Declared Units</th>
+                    <th>Freight</th>
+                    <th>State</th>
+                    <th>Telemetry / Actions</th>
+                  </tr>
                 </thead>
                 <tbody id="pipelineRows"></tbody>
               </table>
             </div>
           </section>
 
-          <!-- PAGE: SENDER BROADCAST FORM -->
+          <!-- PAGE 2: CREATE SHIPMENT -->
           <section class="page" id="pg-create">
-            <div class="pagehead"><h2>Broadcast New Load (Ola-Style 1-Click)</h2></div>
+            <div class="pagehead"><h2>Initiate Consignment Declaration</h2></div>
             <div class="panel">
-              <form onsubmit="handleBroadcastLoad(event)" class="grid2">
-                <div class="field"><label>Receiver NFE ID</label><input id="f_rcvId" value="NFE-RET-9042" required></div>
-                <div class="field"><label>Receiver Legal Name</label><input id="f_rcvName" value="Tata AutoComp Systems Ltd" required></div>
-                <div class="field"><label>Loading Location</label><input id="f_pickup" value="Butibori MIDC, Nagpur" required></div>
-                <div class="field"><label>Drop Dock</label><input id="f_delivery" value="Bhosari MIDC, Pune" required></div>
-                <div class="field"><label>Quantity (Bags)</label><input id="f_qty" type="number" value="500" required></div>
-                <div class="field"><label>Unit Price (INR)</label><input id="f_unitPrice" type="number" value="1200" required></div>
-                <div class="field"><label>Cargo Type</label><input id="f_goods" value="Rice Bags" required></div>
-                <div class="field"><label>Offered Freight Rate (INR)</label><input id="f_freight" type="number" value="22500" required></div>
+              <span style="font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;">1-Tap Frequent Consignee Directory</span>
+              <div class="chip-row">
+                <div class="chip" onclick="fillConsignee('NFE-RET-9042', 'Tata AutoComp Systems Ltd', 'Plot 12, Bhosari MIDC, Pune', 'Bags', 1200)">Tata AutoComp (Pune)</div>
+                <div class="chip" onclick="fillConsignee('NFE-HUB-2048', 'Mahindra Logistics Yard', 'Gate 4, Chakan Phase 2, Pune', 'Boxes', 850)">Mahindra Yard (Chakan)</div>
+              </div>
+
+              <form onsubmit="handleCreate(event)" class="grid2">
+                <div class="field"><label>Receiver Unique NFE ID *</label><input id="f_rcvId" value="NFE-RET-9042" required style="font-family:monospace;font-weight:800;"></div>
+                <div class="field"><label>Verified Receiver Legal Name *</label><input id="f_rcvName" value="Tata AutoComp Systems Ltd" required></div>
+                <div class="field"><label>Loading Facility / Bay *</label><input id="f_pickup" value="Plot 42, Butibori Industrial MIDC, Bay 1" required></div>
+                <div class="field"><label>Delivery Facility / Drop Dock *</label><input id="f_delivery" value="Plot 12, Bhosari MIDC, Pune" required></div>
+                <div class="field">
+                  <label>Declared Quantity & Unit *</label>
+                  <div style="display:flex;gap:6px;">
+                    <input id="f_qty" type="number" value="500" required style="flex:2;">
+                    <select id="f_unit" style="flex:1;"><option>Bags</option><option>Boxes</option><option>Quintals</option></select>
+                  </div>
+                </div>
+                <div class="field"><label>Cargo Unit Price (INR) *</label><input id="f_unitPrice" type="number" value="1200" required></div>
+                <div class="field"><label>Cargo Description *</label><input id="f_goods" value="Consumer Packaged Food Cartons / Rice" required></div>
+                <div class="field">
+                  <label>Required Vehicle Class</label>
+                  <select id="f_veh">
+                    <option>14ft Maxi Truck (4 MT)</option>
+                    <option>32ft Container (15+ MT)</option>
+                  </select>
+                </div>
+                <div class="field"><label>Agreed Freight Rate (INR) *</label><input id="f_freight" type="number" value="22500" required></div>
+                <div class="field full"><label>Handling Directives</label><textarea id="f_notes" placeholder="Seals mandatory at dispatch gate"></textarea></div>
                 <div class="field full btnrow">
-                  <button class="btn amber" type="submit" style="padding:12px 18px;">🚀 BROADCAST TO ALL REGISTERED TRANSPORTERS</button>
+                  <button class="btn blue" type="submit" style="padding:10px 16px;">SEND DISPATCH & TRIGGER WHATSAPP BOT →</button>
                 </div>
               </form>
             </div>
           </section>
 
-          <!-- PAGE: TRANSPORTER FLEET & DRIVER POOL -->
-          <section class="page" id="pg-transporter">
-            <div class="pagehead"><h2>Transporter Fleet & Driver Pool Management</h2></div>
-            <div class="notice">Transporter apne trucks aur drivers ke numbers yahan register karta hai taaki broadcasted loads ka notification seedha unke WhatsApp par aaye.</div>
-            
-            <div class="panel">
-              <h3>🔥 Open Load Market (Claimable Broadcasts)</h3>
-              <div id="openLoadsFeed"></div>
-            </div>
-
-            <div class="panel">
-              <h3>🚚 Registered Fleet & Driver Pool</h3>
-              <table>
-                <thead><tr><th>Truck No.</th><th>Driver Name</th><th>Driver WhatsApp Number</th><th>Status</th></tr></thead>
-                <tbody>
-                  <tr><td><b>MH-31-AP-9042</b></td><td>Ramesh Yadav</td><td>+91 98901 23456</td><td><span class="status transit">ON TRIP</span></td></tr>
-                  <tr><td><b>MH-40-Y-1024</b></td><td>Sunil Pawar</td><td>+91 98909 87654</td><td><span class="status accepted">READY</span></td></tr>
-                </tbody>
-              </table>
-            </div>
-          </section>
-
-          <!-- PAGE: CFO AUDIT PORTAL -->
-          <section class="page" id="pg-cfo">
-            <div class="pagehead">
-              <h2>Executive CFO & Plant Audit Console</h2>
-              <button class="btn tally" onclick="exportFullTallyXML()">📥 Download Batch Tally XML</button>
-            </div>
-
-            <div class="panel">
-              <h3>🧾 Reconciled Voucher Register & Kat-Pit Debit Notes</h3>
-              <table>
-                <thead>
-                  <tr><th>Trip ID</th><th>Consignee</th><th>Declared Qty</th><th>Actual Recd</th><th>Freight Value</th><th>Shortage Debit Note</th><th>Tally Audit</th></tr>
-                </thead>
-                <tbody id="cfoTableRows"></tbody>
-              </table>
-            </div>
-          </section>
-
-          <!-- PAGE: RECEIVER DOCK INWARD -->
-          <section class="page" id="pg-dock">
-            <div class="pagehead"><h2>Inward Dock Count & Proof of Delivery (POD) Reconciliation</h2></div>
-            <div id="dockFeed"></div>
-          </section>
-
-          <!-- PAGE: GPS RADAR MAP -->
+          <!-- PAGE 3: LIVE TELEMETRY RADAR -->
           <section class="page" id="pg-radar">
             <div class="pagehead">
-              <h2>GPS Tracking (Highway Radar)</h2>
-              <button class="btn green" onclick="simulateNextCheckpoint()">⚡ Advance 50 KM</button>
+              <div><h2>GPS Tracking (Highway Radar)</h2><small style="color:var(--muted)">Corridor: Butibori MIDC, Nagpur ⇄ Bhosari MIDC, Pune</small></div>
+              <div class="btnrow"><button class="btn green" onclick="simulateNextCheckpoint()">⚡ Advance 50 KM (Simulation)</button></div>
             </div>
             <div class="panel">
               <div class="radar-grid">
                 <div><div id="liveMap"></div></div>
                 <div>
                   <div class="telemetry-card">
-                    <h4>Active Unit Radar</h4>
-                    <div class="tele-row"><span>Shipment Ref:</span> <b style="color:var(--blue);">#NFE-881</b></div>
-                    <div class="tele-row"><span>Location:</span> <b id="t_loc">Jalna Bypass</b></div>
+                    <h4 style="margin:0 0 10px;font-size:12px;text-transform:uppercase;color:var(--muted);">Active En Route Unit</h4>
+                    <div class="tele-row"><span>Shipment Ref:</span> <b id="t_ref" style="color:var(--blue);">#NFE-881</b></div>
+                    <div class="tele-row"><span>Vehicle Number:</span> <b id="t_veh">MH-31-AP-9042</b></div>
+                    <div class="tele-row"><span>Current Checkpoint:</span> <b id="t_loc">Jalna Bypass (NH 753F)</b></div>
                   </div>
                 </div>
               </div>
             </div>
           </section>
+
+          <!-- PAGE 4: REQUESTS -->
+          <section class="page" id="pg-requests">
+            <div class="pagehead"><h2>Consignment Review & Acceptance Desk</h2></div>
+            <div id="requestsFeed"></div>
+          </section>
+
+          <!-- PAGE 5: DOCK INWARD WITH POD & KAT-PIT -->
+          <section class="page" id="pg-dock">
+            <div class="pagehead"><h2>Inward Dock Count & Proof of Delivery (POD) Reconciliation</h2></div>
+            <div class="notice">Enter actual received quantity. If there is a shortage or damage ("Kat-Pit"), the system automatically calculates the financial deduction note for Tally.</div>
+            <div id="dockFeed"></div>
+          </section>
+
+          <!-- PAGE 6: AUDIT TRAIL -->
+          <section class="page" id="pg-audit">
+            <div class="pagehead"><h2>Append-Only Audit Log</h2></div>
+            <div class="panel" id="auditFeed"></div>
+          </section>
         </main>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Digital Bilty -->
+  <div class="modalback" id="slipModal" onclick="if(event.target===this)closeModalApp()">
+    <div class="modal">
+      <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:2px dashed var(--line);padding-bottom:10px;margin-bottom:12px;">
+        <div>
+          <h3 id="m_title" style="margin:0;">NFE OFFICIAL GATE PASS / BILTY</h3>
+          <small id="m_ref" style="font-family:monospace;color:var(--blue);font-weight:800;">#REF-XXX</small>
+        </div>
+        <span class="status delivered" id="m_badge">VERIFIED RECORD</span>
+      </div>
+      <div class="slip-row"><span>Sender Legal Unit:</span> <span id="m_sender">Apex Agro Foods</span></div>
+      <div class="slip-row"><span>Receiver Facility:</span> <span id="m_receiver">-</span></div>
+      <div class="slip-row"><span>Assigned Vehicle:</span> <span id="m_veh">-</span></div>
+      <div class="slip-row"><span>Declared Cargo:</span> <span id="m_cargo">-</span></div>
+      <div class="slip-row"><span>Actual Received Count:</span> <span id="m_actual" style="color:var(--green)">-</span></div>
+      
+      <div id="m_debitBox" style="background:var(--red-soft);border:1.5px solid #fecaca;padding:10px;border-radius:8px;margin:10px 0;display:none;">
+        <div style="font-size:11px;font-weight:900;color:var(--red);">SHORTAGE / KAT-PIT CLAIM RECORDED</div>
+        <div id="m_debitDetails" style="font-size:12px;font-weight:700;margin-top:2px;">-</div>
+      </div>
+
+      <div style="border-top:1px solid var(--line);margin-top:10px;padding-top:8px;">
+        <div class="slip-row"><span>Agreed Gross Freight:</span> <span id="m_grossFreight">-</span></div>
+        <div class="slip-row" id="m_rowDebit" style="color:var(--red);display:none;"><span>Debit Note Deduction:</span> <span id="m_debitAmt">-</span></div>
+        <div class="slip-row"><span>Net Transporter Payout:</span> <span style="color:var(--green);font-weight:900;" id="m_netTransporter">-</span></div>
+      </div>
+
+      <div id="m_evidenceView" style="margin-top:12px;display:none;">
+        <label style="font-size:10px;text-transform:uppercase;font-weight:800;color:var(--muted);">Signed POD Photo Attached:</label>
+        <div id="m_evidenceImg" style="margin-top:4px;font-size:11px;color:var(--blue);font-weight:700;">✓ POD image verified & watermarked</div>
+      </div>
+
+      <div class="btnrow" style="margin-top:16px;">
+        <button class="btn tally" id="btnSingleTallyXml">⚡ Download Tally Voucher XML</button>
+        <button class="btn" onclick="closeModalApp()">Close</button>
       </div>
     </div>
   </div>
@@ -310,70 +405,86 @@ th{font-size:10px;text-transform:uppercase;color:var(--muted);background:#f8fafc
   <div class="toast hidden" id="toast"></div>
 
   <script>
-    let currentRoleType = '', currentSubRole = '';
+    let currentRoleType = '', currentAuthMode = 'login', currentSubRole = '';
 
     function openModal(id){ document.getElementById(id).style.display = 'flex'; }
     function closeModal(id){ document.getElementById(id).style.display = 'none'; }
+    function closeModalApp(){ document.getElementById('slipModal').classList.remove('show'); }
 
-    function openAuthModal(role, subRole = '') {
+    function openAuthModal(role, mode, subRole = '') {
       closeModal('managerModal');
-      currentRoleType = role; currentSubRole = subRole;
+      currentRoleType = role; currentAuthMode = mode; currentSubRole = subRole;
       const titleEl = document.getElementById('authTitle');
       const subEl = document.getElementById('authSubtitle');
       const formEl = document.getElementById('authForm');
+      const switchEl = document.getElementById('authSwitchContainer');
 
       if (role === 'manager') {
-        titleEl.textContent = `Manager Gateway [${subRole}]`;
-        subEl.textContent = `Enter Unit Code to Unlock Shift`;
-        formEl.innerHTML = `
-          <div class="form-group"><label>Permanent Unit / Hub Code</label><input type="text" id="inp_hub" class="form-control" value="NFE-HUB-1024" required></div>
-          <div class="form-group"><label>Duty Mobile (+91)</label><input type="tel" class="form-control" value="9823012345" maxlength="10" required></div>
-          <button type="submit" class="btn-submit">UNLOCK DESK ➔</button>
-        `;
-      } else if (role === 'transporter') {
-        titleEl.textContent = `Transporter & Driver Pool Login`;
-        subEl.textContent = `Manage Fleet Numbers & Claim Loads`;
-        formEl.innerHTML = `
-          <div class="form-group"><label>Agency Name</label><input type="text" class="form-control" value="Sharma Roadlines" required></div>
-          <div class="form-group"><label>Owner Mobile</label><input type="tel" class="form-control" value="9893012345" maxlength="10" required></div>
-          <button type="submit" class="btn-submit">ENTER FLEET COCKPIT ➔</button>
-        `;
+        titleEl.textContent = mode === 'login' ? `Manager Login [${subRole} Desk]` : `Register New Factory / Hub`;
+        subEl.textContent = mode === 'login' ? `Enter Unit Code & Duty details` : `Get permanent NFE-HUB Code`;
+        
+        if (mode === 'login') {
+          formEl.innerHTML = `
+            <div class="form-group"><label>Permanent Unit / Hub Code</label><input type="text" id="inp_hub" class="form-control" value="NFE-HUB-1024" required></div>
+            <div class="form-group"><label>Shift In-Charge Name</label><input type="text" id="inp_staff" class="form-control" value="Ramesh Agarwal" required></div>
+            <div class="form-group"><label>Duty Mobile (+91)</label><input type="tel" class="form-control" value="9823012345" maxlength="10" required></div>
+            <button type="submit" class="btn-submit">UNLOCK MANAGER DESK ➔</button>
+          `;
+          switchEl.innerHTML = `New Plant / Warehouse? <a onclick="openAuthModal('manager', 'register')">Register New Unit</a>`;
+        } else {
+          formEl.innerHTML = `
+            <div class="form-group"><label>Enterprise Legal Trade Name</label><input type="text" class="form-control" placeholder="Nagpur Agro Foods Ltd" required></div>
+            <div class="form-group"><label>GSTIN / Industrial Reg No.</label><input type="text" class="form-control" placeholder="27AAAAA0000A1Z5" required></div>
+            <div class="form-group"><label>Plant Address & Gate No.</label><input type="text" class="form-control" placeholder="Plot 42, Butibori MIDC" required></div>
+            <div class="form-group"><label>Plant Head Mobile</label><input type="tel" class="form-control" placeholder="98XXXXXXXX" maxlength="10" required></div>
+            <button type="submit" class="btn-submit">GENERATE PERMANENT HUB CODE ➔</button>
+          `;
+          switchEl.innerHTML = `Already registered? <a onclick="openAuthModal('manager', 'login', '${subRole||'Sender'}')">Sign In Here</a>`;
+        }
       } else {
-        titleEl.textContent = `Executive CFO Portal`;
-        subEl.textContent = `Multi-Plant Billing Audit`;
+        titleEl.textContent = `${role.toUpperCase()} Portal Access`;
+        subEl.textContent = `Enter credentials to access NFE Spine`;
         formEl.innerHTML = `
-          <div class="form-group"><label>CFO Email ID</label><input type="email" class="form-control" value="cfo@apexagro.com" required></div>
-          <div class="form-group"><label>Secure PIN</label><input type="password" class="form-control" value="••••" required></div>
-          <button type="submit" class="btn-submit">ENTER AUDIT DESK ➔</button>
+          <div class="form-group"><label>Official Account ID / Mobile</label><input type="text" class="form-control" value="ADMIN-9042" required></div>
+          <div class="form-group"><label>Passcode / PIN</label><input type="password" class="form-control" value="••••" required></div>
+          <button type="submit" class="btn-submit">ENTER PORTAL ➔</button>
         `;
+        switchEl.innerHTML = ``;
       }
+
       openModal('authModal');
     }
 
     function handleFormSubmit(e) {
       e.preventDefault();
-      closeModal('authModal');
-      document.getElementById('landingView').style.display = 'none';
-      document.getElementById('mainAppContainer').style.display = 'block';
-
-      if(currentRoleType==='transporter') {
-        setRole('transporter');
-      } else if(currentRoleType==='cfo') {
-        setRole('cfo');
+      if (currentAuthMode === 'register') {
+        const generatedCode = "NFE-HUB-" + Math.floor(1000 + Math.random() * 9000);
+        alert(`Registration Successful! Permanent NFE Code [${generatedCode}] dispatched to Owner Mobile via WhatsApp API.`);
+        openAuthModal('manager', 'login', 'Sender');
       } else {
+        closeModal('authModal');
+        const staff = document.getElementById('inp_staff')?.value || 'Ramesh Agarwal';
+        const hub = document.getElementById('inp_hub')?.value || 'NFE-HUB-1024';
+        
+        document.getElementById('landingView').style.display = 'none';
+        document.getElementById('mainAppContainer').style.display = 'block';
+        document.getElementById('activeOperatorBadge').textContent = `Operator: ${staff}`;
+        document.getElementById('identityPill').textContent = `Apex Agro Foods (${hub})`;
+        document.getElementById('sideNfeId').textContent = hub;
+
         setRole(currentSubRole.toLowerCase() === 'receiver' ? 'receiver' : 'sender');
+        toast(`Welcome ${staff}! Operational desk initialized.`);
       }
-      toast(`Logged in to NFE ${currentRoleType.toUpperCase()} portal`);
     }
 
-    /* DASHBOARD LOGIC */
-    const DB_KEY='nfe_freight_final_v1';
+    /* CORE OPERATIONAL DASHBOARD JS */
+    const DB_KEY='nfe_freight_master_v1';
     let currentRole='sender', activePage='pg-overview', map=null, truckMarker=null;
 
     const corridorWaypoints=[
-      {lat:20.9126, lon:78.9634, name:'Butibori Gate (Nagpur)'},
-      {lat:19.8410, lon:75.8863, name:'Jalna Bypass'},
-      {lat:18.6298, lon:73.8129, name:'Bhosari MIDC (Pune)'}
+      {lat:20.9126, lon:78.9634, name:'Butibori Industrial Gate (Nagpur)'},
+      {lat:19.8410, lon:75.8863, name:'Jalna Industrial Bypass'},
+      {lat:18.6298, lon:73.8129, name:'Bhosari MIDC (Pune Dock Gate)'}
     ];
     let currentWpIndex=1;
 
@@ -388,10 +499,13 @@ th{font-size:10px;text-transform:uppercase;color:var(--muted);background:#f8fafc
         shipments:[
           {
             id:'NFE-881', senderId:'NFE-HUB-1024', senderName:'Apex Agro Foods', receiverId:'NFE-RET-9042',
-            receiverName:'Tata AutoComp Systems Ltd', pickup:'Butibori MIDC, Nagpur', delivery:'Bhosari MIDC, Pune',
-            goods:'Rice Bags', qty:500, unit:'Bags', unitPrice:1200, freight:22500, state:'BROADCASTING', actualQty:null,
-            debitNote:0, whatsappLog:['💬 WhatsApp API: Load #NFE-881 broadcasted to 12 registered transporter & driver numbers.'],
-            events:[{at:new Date().toISOString(),title:'Broadcast Initialized',actor:'Manager',desc:'Sent to driver pool'}]
+            receiverName:'Tata AutoComp Systems Ltd', pickup:'Plot 42, Butibori MIDC', delivery:'Plot 12, Bhosari MIDC, Pune',
+            goods:'Consumer Packaged Food Cartons', qty:500, unit:'Bags', unitPrice:1200, vehClass:'14ft Maxi Truck (4 MT)',
+            vehicleNo:'MH-31-AP-9042', freight:22500, notes:'Dry seal mandatory', state:'IN_TRANSIT', actualQty:null,
+            debitNote:0, discrepancyType:'NONE', biltyAttached:false, evidenceName:'', receiverRemarks:'',
+            transportAssignment:{transporterName:'Sharma Carriers', vehicleNo:'MH-31-AP-9042', driverName:'Ramesh Yadav'},
+            whatsappLog:['💬 WhatsApp Bot Alert: Dispatch #NFE-881 initialized. Live tracking sent to Driver & Receiver.'],
+            events:[{at:new Date().toISOString(),title:'Declaration Initialized',actor:'Manager (Sender)',desc:'Consignment sent for receiver acceptance'}]
           }
         ]
       };
@@ -400,17 +514,18 @@ th{font-size:10px;text-transform:uppercase;color:var(--muted);background:#f8fafc
     }
 
     const navSetup={
-      sender:[['pg-overview','Live Pipeline'],['pg-create','+ Broadcast Load'],['pg-radar','Live Radar Map']],
-      receiver:[['pg-overview','Live Pipeline'],['pg-dock','Gate Inward & POD'],['pg-radar','Live Radar Map']],
-      transporter:[['pg-transporter','Fleet & Load Market'],['pg-radar','Live Radar Map']],
-      cfo:[['pg-cfo','Tally Audit Console'],['pg-radar','Live Radar Map']]
+      sender:[['pg-overview','Live Pipeline'],['pg-create','+ Create Shipment'],['pg-radar','Live Radar Map'],['pg-audit','Audit Records']],
+      receiver:[['pg-overview','Live Pipeline'],['pg-requests','Review Requests'],['pg-radar','Live Radar Map'],['pg-dock','Gate Inward & POD'],['pg-audit','Audit Records']]
     };
 
     function setRole(r){
       currentRole=r;
-      document.getElementById('heroTitle').textContent = r==='transporter'?'Transporter & Driver Pool Cockpit':r==='cfo'?'Executive CFO & Audit Portal':r==='receiver'?'Receiver Inward Dock':'Manager Outward Dispatch';
+      document.getElementById('btnRoleSender').classList.toggle('active',r==='sender');
+      document.getElementById('btnRoleReceiver').classList.toggle('active',r==='receiver');
+      document.getElementById('layoutRoot').classList.toggle('receiver-mode',r==='receiver');
+      document.getElementById('sideTitle').textContent=r==='sender'?'Manager (Sender Desk)':'Manager (Receiver Dock)';
       buildNav();
-      goPage(navSetup[r][0][0]);
+      goPage('pg-overview');
     }
 
     function buildNav(){
@@ -433,11 +548,20 @@ th{font-size:10px;text-transform:uppercase;color:var(--muted);background:#f8fafc
     }
 
     function renderAll(){
+      const db=readData(); const list=db.shipments;
+      document.getElementById('statsRow').innerHTML=`
+        <div class="stat"><label>Awaiting Accept</label><strong>${list.filter(s=>s.state==='PENDING_ACCEPTANCE').length}</strong></div>
+        <div class="stat"><label>Ready to Dispatch</label><strong>${list.filter(s=>s.state==='ACCEPTED').length}</strong></div>
+        <div class="stat"><label>On Highway (Locked)</label><strong>${list.filter(s=>s.state==='IN_TRANSIT').length}</strong></div>
+        <div class="stat"><label>Settled & POD</label><strong>${list.filter(s=>s.state==='SETTLED').length}</strong></div>
+      `;
       renderWaBanner();
       renderTable();
-      renderOpenLoads();
+      renderControlTower();
+      renderAssignments();
+      renderRequests();
       renderDock();
-      renderCfoTable();
+      renderAudit();
     }
 
     function renderWaBanner(){
@@ -445,7 +569,46 @@ th{font-size:10px;text-transform:uppercase;color:var(--muted);background:#f8fafc
       const box=document.getElementById('whatsappLogBanner');
       if(!box) return;
       if(!logs.length){box.innerHTML='';return;}
-      box.innerHTML=`<div class="wa-simulation-box"><b>📱 Live WhatsApp Driver Pool Activity:</b> ${logs[0]}</div>`;
+      box.innerHTML=`<div class="wa-simulation-box"><b>📱 Live WhatsApp Bot Activity:</b> ${logs[0]}</div>`;
+    }
+
+    function renderControlTower(){
+      const root=document.getElementById('controlTowerFeed'); if(!root)return;
+      const db=readData(), list=db.shipments;
+      root.innerHTML=[
+        ['Awaiting receiver action', list.filter(s=>s.state==='PENDING_ACCEPTANCE').length],
+        ['Accepted — transporter needed', list.filter(s=>s.state==='ACCEPTED'&&!s.transportAssignment).length],
+        ['In transit on highway', list.filter(s=>s.state==='IN_TRANSIT').length],
+        ['Settled & Archived', list.filter(s=>s.state==='SETTLED').length]
+      ].map(([label,count])=>`<div class="stat"><label>${label}</label><strong>${count}</strong></div>`).join('');
+    }
+
+    function renderAssignments(){
+      const root=document.getElementById('assignmentFeed'); if(!root)return;
+      const panel=document.getElementById('assignmentPanel'); if(panel)panel.style.display=currentRole==='sender'?'block':'none';
+      if(currentRole!=='sender'){root.innerHTML='';return;}
+      const db=readData(), accepted=db.shipments.filter(s=>s.state==='ACCEPTED');
+      if(!accepted.length){root.innerHTML='<div class="notice">No accepted shipments awaiting transport allocation.</div>';return;}
+      root.innerHTML=accepted.map(s=>`
+        <div class="assignment-card">
+          <b>#${s.id}</b> · ${s.receiverName}
+          <div class="assignment-grid">
+            <div class="field"><label>Transporter Name</label><input id="trname_${s.id}" value="Sharma Carriers"></div>
+            <div class="field"><label>Vehicle Number</label><input id="veh_${s.id}" value="MH-31-AP-9042"></div>
+            <div class="field"><label>Driver Name</label><input id="driver_${s.id}" value="Ramesh Yadav"></div>
+          </div>
+          <div class="btnrow" style="margin-top:10px"><button class="btn blue" onclick="saveTransportAssignment('${s.id}')">Save & Assign</button></div>
+        </div>
+      `).join('');
+    }
+
+    function saveTransportAssignment(id){
+      const db=readData(), s=db.shipments.find(x=>x.id===id);
+      s.transportAssignment={transporterName:document.getElementById(`trname_${id}`).value, vehicleNo:document.getElementById(`veh_${id}`).value, driverName:document.getElementById(`driver_${id}`).value};
+      s.vehicleNo=document.getElementById(`veh_${id}`).value;
+      s.whatsappLog.unshift(`💬 WhatsApp Bot: Transporter & Driver assigned for #${id}.`);
+      s.events.unshift({at:new Date().toISOString(),title:'Transport Assigned',actor:'Manager',desc:'Transporter details locked'});
+      writeData(db); toast('Transport assignment saved.');
     }
 
     function renderTable(){
@@ -454,47 +617,63 @@ th{font-size:10px;text-transform:uppercase;color:var(--muted);background:#f8fafc
       tbody.innerHTML=db.shipments.map(s=>`
         <tr>
           <td style="font-family:monospace;font-weight:900;color:var(--blue);">${s.id}</td>
-          <td><b>${s.receiverName}</b></td>
+          <td><b>${s.receiverName}</b><br><small style="color:var(--muted)">${s.delivery}</small></td>
           <td>${s.goods}</td>
           <td><b>${s.qty} ${s.unit}</b></td>
           <td style="font-weight:800;color:var(--green);">₹${s.freight.toLocaleString('en-IN')}</td>
-          <td><span class="status ${s.state==='BROADCASTING'?'pending':s.state==='IN_TRANSIT'?'transit':'delivered'}">${s.state}</span></td>
-          <td>${s.state==='BROADCASTING'?'📡 WhatsApp Broadcast Sent':'🔒 Claimed & Dispatched'}</td>
+          <td><span class="status ${s.state==='PENDING_ACCEPTANCE'?'pending':s.state==='ACCEPTED'?'accepted':s.state==='IN_TRANSIT'?'transit':'delivered'}">${s.state}</span></td>
+          <td>
+            ${currentRole==='sender'&&s.state==='ACCEPTED'?`<button class="btn blue" onclick="lockAndDispatch('${s.id}')">🔒 Dispatch</button>`:''}
+            <button class="btn" onclick="openSlip('${s.id}')">View Pass</button>
+          </td>
         </tr>
       `).join('');
     }
 
-    function renderOpenLoads(){
-      const root=document.getElementById('openLoadsFeed'); if(!root)return;
-      const db=readData(), openLoads=db.shipments.filter(s=>s.state==='BROADCASTING');
-      root.innerHTML=openLoads.length?openLoads.map(s=>`
-        <div style="background:#fffbeb;border:1.5px solid var(--amber);padding:12px;border-radius:8px;margin-bottom:10px;">
-          <b>#${s.id}</b> · ${s.pickup} ➔ ${s.delivery} (${s.qty} ${s.unit})
-          <div style="font-weight:800;color:var(--green);margin:4px 0;">Freight Offer: ₹${s.freight.toLocaleString('en-IN')}</div>
-          <button class="btn amber" onclick="claimLoad('${s.id}')">⚡ 1-Tap Claim Load (WhatsApp Trigger)</button>
-        </div>
-      `).join(''):'<div style="color:var(--muted);font-size:12px;">No open broadcasted loads right now.</div>';
+    function fillConsignee(id, name, del, unit, price){
+      document.getElementById('f_rcvId').value=id;
+      document.getElementById('f_rcvName').value=name;
+      document.getElementById('f_delivery').value=del;
+      document.getElementById('f_unit').value=unit;
+      document.getElementById('f_unitPrice').value=price;
     }
 
-    function claimLoad(id){
-      const db=readData(), s=db.shipments.find(x=>x.id===id);
-      s.state='IN_TRANSIT';
-      s.whatsappLog.unshift(`💬 WhatsApp API: Load #${id} claimed by Sharma Roadlines driver. Trip active.`);
-      writeData(db); toast('Load Claimed Successfully! Highway telemetry active.'); setRole('transporter');
-    }
-
-    function handleBroadcastLoad(e){
+    function handleCreate(e){
       e.preventDefault(); const db=readData(); const id='NFE-'+Math.floor(100000+Math.random()*900000);
       db.shipments.unshift({
         id, senderId:'NFE-HUB-1024', senderName:'Apex Agro Foods', receiverId:document.getElementById('f_rcvId').value,
         receiverName:document.getElementById('f_rcvName').value, pickup:document.getElementById('f_pickup').value,
         delivery:document.getElementById('f_delivery').value, goods:document.getElementById('f_goods').value,
-        qty:Number(document.getElementById('f_qty').value), unit:'Bags',
-        unitPrice:Number(document.getElementById('f_unitPrice').value), freight:Number(document.getElementById('f_freight').value),
-        state:'BROADCASTING', actualQty:null, debitNote:0,
-        whatsappLog:[`💬 WhatsApp API: New Load #${id} sent to all registered transporter & driver mobile numbers in database.`]
+        qty:Number(document.getElementById('f_qty').value), unit:document.getElementById('f_unit').value,
+        unitPrice:Number(document.getElementById('f_unitPrice').value), vehClass:document.getElementById('f_veh').value,
+        vehicleNo:'MH-31-'+Math.floor(1000+Math.random()*9000), freight:Number(document.getElementById('f_freight').value),
+        notes:document.getElementById('f_notes').value, state:'PENDING_ACCEPTANCE', actualQty:null, debitNote:0,
+        whatsappLog:[`💬 WhatsApp Bot: New Consignment #${id} created by Manager. Broadcasted via WhatsApp.`],
+        events:[{at:new Date().toISOString(),title:'Declaration Created',actor:'Manager',desc:'Broadcasted for acceptance'}]
       });
-      writeData(db); toast('Load broadcasted to all drivers!'); goPage('pg-overview');
+      writeData(db); toast('Consignment broadcasted!'); goPage('pg-overview');
+    }
+
+    function lockAndDispatch(id){
+      const db=readData(), s=db.shipments.find(x=>x.id===id);
+      s.state='IN_TRANSIT';
+      s.whatsappLog.unshift(`💬 WhatsApp Bot: Trip #${id} dispatched. Live highway radar active.`);
+      s.events.unshift({at:new Date().toISOString(),title:'Dispatch Snapshot Locked',actor:'Manager',desc:'Vehicle en route'});
+      writeData(db); toast('Truck dispatched on highway!'); goPage('pg-radar');
+    }
+
+    function renderRequests(){
+      const root=document.getElementById('requestsFeed'); if(!root)return;
+      const db=readData(), pending=db.shipments.filter(s=>s.state==='PENDING_ACCEPTANCE');
+      root.innerHTML=pending.length?pending.map(s=>`<div class="panel"><h3>#${s.id}</h3><p>${s.senderName} declared ${s.qty} ${s.unit}.</p><button class="btn green" onclick="acceptConsignment('${s.id}')">✓ Accept Terms</button></div>`).join(''):'<div class="panel" style="text-align:center;color:var(--muted)">No incoming requests awaiting acceptance.</div>';
+    }
+
+    function acceptConsignment(id){
+      const db=readData(), s=db.shipments.find(x=>x.id===id);
+      s.state='ACCEPTED';
+      s.whatsappLog.unshift(`💬 WhatsApp Bot: Consignment #${id} digitally accepted by receiver.`);
+      s.events.unshift({at:new Date().toISOString(),title:'Terms Accepted',actor:'Manager (Receiver)',desc:'Dispatch unlocked'});
+      writeData(db); toast('Shipment accepted!');
     }
 
     function renderDock(){
@@ -502,42 +681,51 @@ th{font-size:10px;text-transform:uppercase;color:var(--muted);background:#f8fafc
       const db=readData(), active=db.shipments.filter(s=>s.state==='IN_TRANSIT');
       root.innerHTML=active.length?active.map(s=>`
         <div class="panel">
-          <h3>Dock Gate Inward Reconciliation: #${s.id}</h3>
-          <p style="font-size:12px;color:var(--muted)">Declared: <b>${s.qty} Bags</b> | Price/Bag: ₹${s.unitPrice}</p>
+          <h3>Inward Verification & Kat-Pit Calculator: #${s.id}</h3>
+          <p style="font-size:12px;color:var(--muted)">Declared Quantity: <b>${s.qty} ${s.unit}</b> | Unit Price: ₹${s.unitPrice}</p>
           <div class="grid2" style="margin-top:10px;">
-            <div class="field"><label>Actual Unloaded Count</label><input type="number" id="act_${s.id}" value="${s.qty}"></div>
-            <div class="field"><label>Attach Signed POD Photo</label><input type="file" id="file_${s.id}" style="padding:4px;" required></div>
+            <div class="field"><label>Actual Unloaded Count *</label><input type="number" id="act_${s.id}" value="${s.qty}"></div>
+            <div class="field"><label>Attach Signed POD / Bilty Photo *</label><input type="file" id="file_${s.id}" accept="image/*" style="padding:4px;"></div>
+            <div class="field full"><label>Receiver Remarks (Shortage / Damage)</label><input id="rem_${s.id}" placeholder="e.g. 10 bags short received"></div>
           </div>
-          <button class="btn green" style="margin-top:12px" onclick="settleDock('${s.id}')">Confirm POD & Calculate Kat-Pit ✓</button>
+          <button class="btn green" style="margin-top:12px" onclick="settleDockInward('${s.id}')">Record POD, Calculate Shortage & Settle ✓</button>
         </div>
       `).join(''):'<div class="panel" style="text-align:center;color:var(--muted)">No arrived trucks awaiting inward count.</div>';
     }
 
-    function settleDock(id){
+    function settleDockInward(id){
       const db=readData(), s=db.shipments.find(x=>x.id===id);
       const actual=Number(document.getElementById(`act_${id}`).value);
       const fileInput=document.getElementById(`file_${id}`);
-      if(!fileInput.files.length){toast('Please attach POD photo');return;}
+      const remarks=document.getElementById(`rem_${id}`).value;
+
+      if(!fileInput.files.length){toast('Please attach signed POD photo evidence.');return;}
       
       s.actualQty=actual;
+      s.biltyAttached=true;
+      s.evidenceName=fileInput.files[0].name;
+      s.receiverRemarks=remarks;
+
       const diff=actual-s.qty;
-      s.debitNote=diff<0?Math.abs(diff)*s.unitPrice:0;
+      if(diff < 0){
+        s.discrepancyType='SHORTAGE';
+        s.debitNote=Math.abs(diff)*s.unitPrice;
+      } else {
+        s.discrepancyType='NONE';
+        s.debitNote=0;
+      }
+
       s.state='SETTLED';
-      s.whatsappLog.unshift(`💬 WhatsApp API: Inward settled for #${id}. Shortage Debit Note: ₹${s.debitNote}`);
-      writeData(db); toast('POD verified & Kat-Pit calculated!'); setRole('cfo');
+      s.whatsappLog.unshift(`💬 WhatsApp Bot: Inward reconciliation done for #${id}. Actual: ${actual} ${s.unit}. Debit Note: ₹${s.debitNote}`);
+      s.events.unshift({at:new Date().toISOString(),title:'POD & Receipt Confirmed (Kat-Pit Calculated)',actor:'Manager (Receiver)',desc:`Received ${actual}. Shortage value: ₹${s.debitNote}. Remarks: ${remarks}`});
+      
+      writeData(db); toast('Delivery receipt completed with auto Tally debit note calculation.'); openSlip(s.id);
     }
 
-    function renderCfoTable(){
-      const tbody=document.getElementById('cfoTableRows'); if(!tbody)return;
-      const db=readData(), settled=db.shipments.filter(s=>s.state==='SETTLED');
-      tbody.innerHTML=settled.length?settled.map(s=>`
-        <tr>
-          <td><b>#${s.id}</b></td><td>${s.receiverName}</td><td>${s.qty} Bags</td><td>${s.actualQty} Bags</td>
-          <td>₹${s.freight.toLocaleString('en-IN')}</td>
-          <td style="color:var(--red);font-weight:800;">${s.debitNote>0?`-₹${s.debitNote.toLocaleString('en-IN')} (Shortage)`:'No Deduction'}</td>
-          <td><span class="status delivered">✓ Tally XML Ready</span></td>
-        </tr>
-      `).join(''):`<tr><td colspan="7" style="text-align:center;color:var(--muted);">No settled records yet. Complete an inward delivery to view Tally audit.</td></tr>`;
+    function renderAudit(){
+      const root=document.getElementById('auditFeed'); if(!root)return;
+      const db=readData(), events=db.shipments.flatMap(s=>s.events.map(e=>({...e,shipmentId:s.id}))).sort((a,b)=>new Date(b.at)-new Date(a.at));
+      root.innerHTML=events.map(ev=>`<div class="event"><span class="dot"></span><div><b>#${ev.shipmentId} · ${ev.title}</b><div style="font-size:11px;color:var(--muted);">${ev.actor} • ${ev.desc}</div></div></div>`).join('');
     }
 
     function initMap(){
@@ -552,14 +740,87 @@ th{font-size:10px;text-transform:uppercase;color:var(--muted);background:#f8fafc
     function simulateNextCheckpoint(){
       currentWpIndex=(currentWpIndex+1)%corridorWaypoints.length; const wp=corridorWaypoints[currentWpIndex];
       if(truckMarker){ truckMarker.setLatLng([wp.lat, wp.lon]); map.flyTo([wp.lat, wp.lon], 9); }
-      toast(`GPS Telemetry updated: Truck reached ${wp.name}`);
+      toast(`Truck reached ${wp.name}`);
+    }
+
+    function openSlip(id){
+      const db=readData(), s=db.shipments.find(x=>x.id===id); if(!s)return;
+      document.getElementById('m_ref').textContent='#'+s.id;
+      document.getElementById('m_receiver').textContent=s.receiverName;
+      document.getElementById('m_veh').textContent=s.vehicleNo;
+      document.getElementById('m_cargo').textContent=s.qty+' '+s.unit+' ('+s.goods+')';
+      document.getElementById('m_actual').textContent=s.actualQty!==null?s.actualQty+' '+s.unit:'Pending Gate-In';
+      document.getElementById('m_grossFreight').textContent='₹'+s.freight.toLocaleString('en-IN');
+
+      const debitBox=document.getElementById('m_debitBox');
+      const rowDebit=document.getElementById('m_rowDebit');
+
+      if(s.debitNote > 0){
+        debitBox.style.display='block';
+        rowDebit.style.display='flex';
+        document.getElementById('m_debitDetails').textContent=`Shortage of ${s.qty - s.actualQty} ${s.unit}. Auto Debit Note value: ₹${s.debitNote.toLocaleString('en-IN')} (Ready for Tally)`;
+        document.getElementById('m_debitAmt').textContent='-₹'+s.debitNote.toLocaleString('en-IN');
+        document.getElementById('m_netTransporter').textContent='₹'+(s.freight).toLocaleString('en-IN');
+      } else {
+        debitBox.style.display='none';
+        rowDebit.style.display='none';
+        document.getElementById('m_netTransporter').textContent='₹'+s.freight.toLocaleString('en-IN');
+      }
+
+      const evView=document.getElementById('m_evidenceView');
+      evView.style.display=s.biltyAttached?'block':'none';
+      document.getElementById('m_evidenceImg').textContent=s.biltyAttached?(`✓ Watermarked POD attached: ${s.evidenceName}`):'No POD attached';
+
+      document.getElementById('btnSingleTallyXml').onclick=()=>{
+        const xml=generateTallyXML(s);
+        const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([xml],{type:'application/xml'}));
+        a.download=`Tally_Voucher_${s.id}.xml`; a.click();
+        toast(`Tally XML for ${s.id} downloaded.`);
+      };
+
+      document.getElementById('slipModal').classList.add('show');
+    }
+
+    function generateTallyXML(s){
+      const dateStr=new Date().toISOString().slice(0,10).replace(/-/g,'');
+      const invoiceVal=(s.actualQty||s.qty)*s.unitPrice;
+      return `<?xml version="1.0" encoding="UTF-8"?>
+<ENVELOPE>
+  <HEADER><TALLYREQUEST>Import Data</TALLYREQUEST></HEADER>
+  <BODY><IMPORTDATA><REQUESTDESC><REPORTNAME>Vouchers</REPORTNAME></REQUESTDESC><REQUESTDATA>
+    <TALLYMESSAGE>
+      <VOUCHER VCHTYPE="Sales" ACTION="Create">
+        <DATE>${dateStr}</DATE>
+        <VOUCHERTYPENAME>Sales</VOUCHERTYPENAME>
+        <VOUCHERNUMBER>${s.id}</VOUCHERNUMBER>
+        <PARTYLEDGERNAME>${s.receiverName}</PARTYLEDGERNAME>
+        <NARRATION>NFE Protocol. Vehicle: ${s.vehicleNo}. Received: ${s.actualQty} ${s.unit}</NARRATION>
+        <ALLLEDGERENTRIES.LIST><LEDGERNAME>${s.receiverName}</LEDGERNAME><ISDEEMEDPOSITIVE>Yes</ISDEEMEDPOSITIVE><AMOUNT>-${invoiceVal + s.freight}</AMOUNT></ALLLEDGERENTRIES.LIST>
+        <ALLLEDGERENTRIES.LIST><LEDGERNAME>Sales Account</LEDGERNAME><ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE><AMOUNT>${invoiceVal}</AMOUNT></ALLLEDGERENTRIES.LIST>
+        <ALLLEDGERENTRIES.LIST><LEDGERNAME>Freight Charges</LEDGERNAME><ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE><AMOUNT>${s.freight}</AMOUNT></ALLLEDGERENTRIES.LIST>
+      </VOUCHER>
+      ${s.debitNote > 0 ? `
+      <VOUCHER VCHTYPE="Debit Note" ACTION="Create">
+        <DATE>${dateStr}</DATE>
+        <VOUCHERTYPENAME>Debit Note</VOUCHERTYPENAME>
+        <VOUCHERNUMBER>DN-${s.id}</VOUCHERNUMBER>
+        <PARTYLEDGERNAME>${s.receiverName}</PARTYLEDGERNAME>
+        <NARRATION>Shortage claim on ${s.id}</NARRATION>
+        <ALLLEDGERENTRIES.LIST><LEDGERNAME>Shortage Loss</LEDGERNAME><ISDEEMEDPOSITIVE>Yes</ISDEEMEDPOSITIVE><AMOUNT>-${s.debitNote}</AMOUNT></ALLLEDGERENTRIES.LIST>
+        <ALLLEDGERENTRIES.LIST><LEDGERNAME>${s.receiverName}</LEDGERNAME><ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE><AMOUNT>${s.debitNote}</AMOUNT></ALLLEDGERENTRIES.LIST>
+      </VOUCHER>` : ''}
+    </TALLYMESSAGE>
+  </REQUESTDATA></IMPORTDATA></BODY>
+</ENVELOPE>`;
     }
 
     function exportFullTallyXML(){
-      const xml=`<?xml version="1.0" encoding="UTF-8"?><ENVELOPE><HEADER><TALLYREQUEST>Import Data</TALLYREQUEST></HEADER><BODY><IMPORTDATA><REQUESTDESC><REPORTNAME>Vouchers</REPORTNAME></REQUESTDESC><REQUESTDATA><TALLYMESSAGE><VOUCHER VCHTYPE="Sales" ACTION="Create"><VOUCHERNUMBER>NFE-881</VOUCHERNUMBER></VOUCHER></TALLYMESSAGE></REQUESTDATA></IMPORTDATA></BODY></ENVELOPE>`;
+      const db=readData(), settled=db.shipments.filter(s=>s.state==='SETTLED');
+      if(!settled.length){toast('No settled shipments to export.');return;}
+      const xml=`<?xml version="1.0" encoding="UTF-8"?><ENVELOPE><HEADER><TALLYREQUEST>Import Data</TALLYREQUEST></HEADER><BODY><IMPORTDATA><REQUESTDESC><REPORTNAME>Vouchers</REPORTNAME></REQUESTDESC><REQUESTDATA>${settled.map(s=>generateTallyXML(s).replace(/^.*?<TALLYMESSAGE>/s,'').replace(/<\/TALLYMESSAGE>.*$/s,'')).join('')}</REQUESTDATA></IMPORTDATA></BODY></ENVELOPE>`;
       const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([xml],{type:'application/xml'}));
       a.download=`NFE_Tally_Batch_${Date.now()}.xml`; a.click();
-      toast('Tally XML batch file downloaded successfully!');
+      toast('Batch Tally XML exported successfully!');
     }
   </script>
 </body>
